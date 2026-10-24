@@ -1,723 +1,359 @@
+
 <!DOCTYPE html>
 <html lang="zh-CN">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>我的网站成长记录</title>
-
-  <style>
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-
-      font-family:
-        "Microsoft YaHei",
-        "PingFang SC",
-        sans-serif;
-
-      color: #5c4636;
-
-      background-color: #e8dccb;
-
-      background-image:
-        repeating-linear-gradient(
-          92deg,
-          rgba(120, 90, 60, 0.025) 0px,
-          rgba(120, 90, 60, 0.025) 1px,
-          transparent 1px,
-          transparent 80px
-        ),
-        repeating-linear-gradient(
-          4deg,
-          rgba(255, 255, 255, 0.18) 0px,
-          rgba(255, 255, 255, 0.18) 2px,
-          transparent 2px,
-          transparent 110px
-        );
-    }
-
-
-    .container {
-      width: 90%;
-      max-width: 650px;
-
-      margin: 0 auto;
-
-      padding: 70px 0;
-
-      text-align: center;
-    }
-
-
-    /* ===== 叶子 ===== */
-
-    .leaf {
-      width: 42px;
-      height: 42px;
-
-      margin: 0 auto 12px;
-
-      opacity: 0.72;
-    }
-
-    .leaf svg {
-      width: 100%;
-      height: 100%;
-    }
-
-    .leaf path {
-      fill: none;
-      stroke: #806b57;
-      stroke-width: 1.5;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
-
-
-    /* ===== 标题 ===== */
-
-    h1 {
-      margin: 0;
-
-      color: #5c4636;
-
-      font-size: 44px;
-      font-weight: 400;
-
-      letter-spacing: 10px;
-    }
-
-
-    .date {
-      margin-top: 12px;
-
-      color: #927d68;
-
-      font-size: 13px;
-
-      letter-spacing: 3px;
-    }
-
-
-    /* ===== 第一张翻转卡片 ===== */
-
-    .card {
-      width: 100%;
-      max-width: 580px;
-
-      height: 230px;
-
-      margin: 42px auto 0;
-
-      perspective: 1000px;
-
-      cursor: pointer;
-    }
-
-
-    .card-inner {
-      position: relative;
-
-      width: 100%;
-      height: 100%;
-
-      transition: transform 0.7s ease;
-
-      transform-style: preserve-3d;
-    }
-
-
-    .card.flipped .card-inner {
-      transform: rotateY(180deg);
-    }
-
-
-    .card-front,
-    .card-back {
-
-      position: absolute;
-
-      width: 100%;
-      height: 100%;
-
-      padding: 40px;
-
-      background: rgba(250, 247, 241, 0.94);
-
-      border: 1px solid rgba(120, 90, 60, 0.12);
-
-      border-radius: 20px;
-
-      box-shadow:
-        0 20px 45px rgba(91, 68, 48, 0.13),
-        0 4px 10px rgba(91, 68, 48, 0.07);
-
-      display: flex;
-      justify-content: center;
-      align-items: center;
-
-      backface-visibility: hidden;
-    }
-
-
-    .card-front {
-      color: #725b48;
-
-      font-size: 20px;
-
-      line-height: 1.9;
-
-      letter-spacing: 1px;
-    }
-
-
-    .card-back {
-      transform: rotateY(180deg);
-
-      color: #725b48;
-
-      font-size: 18px;
-
-      line-height: 2;
-
-      letter-spacing: 1px;
-    }
-
-
-    .card-back::before {
-      content: "✦";
-
-      position: absolute;
-
-      top: 25px;
-
-      color: #b29c85;
-
-      font-size: 13px;
-    }
-
-
-    .hint {
-      margin-top: 18px;
-
-      color: #927d68;
-
-      font-size: 12px;
-
-      letter-spacing: 2px;
-
-      opacity: 0.7;
-    }
-
-
-    /* ===== 时间记录 ===== */
-
-    .time-card {
-
-      margin-top: 65px;
-
-      padding: 35px 25px;
-
-      background: rgba(250, 247, 241, 0.72);
-
-      border: 1px solid rgba(120, 90, 60, 0.10);
-
-      border-radius: 18px;
-    }
-
-
-    .time-title {
-
-      color: #806b57;
-
-      font-size: 14px;
-
-      letter-spacing: 3px;
-    }
-
-
-    .days {
-
-      margin-top: 12px;
-
-      color: #5c4636;
-
-      font-size: 38px;
-
-      font-weight: 400;
-    }
-
-
-    .days span {
-
-      font-size: 16px;
-
-      margin-left: 5px;
-
-      color: #927d68;
-    }
-
-
-    .time-subtitle {
-
-      margin-top: 8px;
-
-      color: #927d68;
-
-      font-size: 13px;
-    }
-
-
-    /* ===== 成长记录 ===== */
-
-    .records {
-
-      margin-top: 55px;
-
-      text-align: left;
-    }
-
-
-    .records-title {
-
-      text-align: center;
-
-      color: #5c4636;
-
-      font-size: 22px;
-
-      letter-spacing: 5px;
-
-      margin-bottom: 25px;
-    }
-
-
-    .record {
-
-      position: relative;
-
-      margin-bottom: 15px;
-
-      padding: 20px 22px;
-
-      background: rgba(250, 247, 241, 0.82);
-
-      border-radius: 14px;
-
-      border: 1px solid rgba(120, 90, 60, 0.08);
-
-      box-shadow:
-        0 8px 20px rgba(91, 68, 48, 0.06);
-    }
-
-
-    .record-date {
-
-      color: #a08b76;
-
-      font-size: 12px;
-
-      letter-spacing: 2px;
-
-      margin-bottom: 8px;
-    }
-
-
-    .record-text {
-
-      color: #725b48;
-
-      font-size: 15px;
-
-      line-height: 1.8;
-    }
-
-
-    /* ===== 添加按钮 ===== */
-
-    .add-button {
-
-      display: block;
-
-      margin: 25px auto 0;
-
-      padding: 10px 24px;
-
-      border: 1px solid #b8a38c;
-
-      border-radius: 30px;
-
-      background: transparent;
-
-      color: #806b57;
-
-      font-size: 13px;
-
-      cursor: pointer;
-
-      transition: all 0.25s ease;
-    }
-
-
-    .add-button:hover {
-
-      background: #806b57;
-
-      color: #f8f4ed;
-    }
-
-
-    /* ===== 手机适配 ===== */
-
-    @media (max-width: 600px) {
-
-      .container {
-        padding: 55px 0;
-      }
-
-      h1 {
-        font-size: 36px;
-        letter-spacing: 7px;
-      }
-
-      .card {
-        height: 220px;
-      }
-
-      .card-front,
-      .card-back {
-        padding: 28px;
-      }
-
-      .days {
-        font-size: 34px;
-      }
-
-    }
-
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>我的网站成长记录</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;min-height:100vh;
+  font-family:"Microsoft YaHei","PingFang SC",sans-serif;
+  color:#5c4636;background-color:#e8dccb;
+  background-image:
+    repeating-linear-gradient(92deg,rgba(120,90,60,.025) 0,rgba(120,90,60,.025) 1px,transparent 1px,transparent 80px),
+    repeating-linear-gradient(4deg,rgba(255,255,255,.18) 0,rgba(255,255,255,.18) 2px,transparent 2px,transparent 110px)
+}
+.container{width:90%;max-width:650px;margin:0 auto;padding:70px 0;text-align:center}
+.leaf{width:42px;height:42px;margin:0 auto 12px;opacity:.72}
+.leaf svg{width:100%;height:100%}
+.leaf path{fill:none;stroke:#806b57;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+h1{margin:0;color:#5c4636;font-size:44px;font-weight:400;letter-spacing:10px}
+.date{margin-top:12px;color:#927d68;font-size:13px;letter-spacing:3px}
+.card{width:100%;max-width:580px;height:230px;margin:42px auto 0;perspective:1000px;cursor:pointer}
+.card-inner{position:relative;width:100%;height:100%;transition:transform .7s ease;transform-style:preserve-3d}
+.card.flipped .card-inner{transform:rotateY(180deg)}
+.card-front,.card-back{
+  position:absolute;width:100%;height:100%;padding:40px;
+  background:rgba(250,247,241,.94);border:1px solid rgba(120,90,60,.12);
+  border-radius:20px;box-shadow:0 20px 45px rgba(91,68,48,.13),0 4px 10px rgba(91,68,48,.07);
+  display:flex;justify-content:center;align-items:center;backface-visibility:hidden
+}
+.card-front{color:#725b48;font-size:20px;line-height:1.9;letter-spacing:1px}
+.card-back{transform:rotateY(180deg);color:#725b48;font-size:18px;line-height:2;letter-spacing:1px}
+.card-back::before{content:"✦";position:absolute;top:25px;color:#b29c85;font-size:13px}
+.hint{margin-top:18px;color:#927d68;font-size:12px;letter-spacing:2px;opacity:.7}
+.time-card{margin-top:65px;padding:35px 25px;background:rgba(250,247,241,.72);border:1px solid rgba(120,90,60,.10);border-radius:18px}
+.time-title{color:#806b57;font-size:14px;letter-spacing:3px}
+.days{margin-top:12px;color:#5c4636;font-size:38px;font-weight:400}
+.days span{font-size:16px;margin-left:5px;color:#927d68}
+.time-subtitle{margin-top:8px;color:#927d68;font-size:13px}
+.records{margin-top:55px;text-align:left}
+.records-title{text-align:center;color:#5c4636;font-size:22px;letter-spacing:5px;margin-bottom:25px}
+.record{margin-bottom:15px;padding:20px 22px;background:rgba(250,247,241,.82);border-radius:14px;border:1px solid rgba(120,90,60,.08);box-shadow:0 8px 20px rgba(91,68,48,.06)}
+.record-date{color:#a08b76;font-size:12px;letter-spacing:2px;margin-bottom:8px}
+.record-text{color:#725b48;font-size:15px;line-height:1.8;white-space:pre-wrap;overflow-wrap:anywhere}
+button{font-family:inherit}
+.add-button,.action-button{
+  display:inline-block;margin:12px 5px 0;padding:10px 20px;
+  border:1px solid #b8a38c;border-radius:30px;background:transparent;
+  color:#806b57;font-size:13px;cursor:pointer
+}
+.add-button:hover,.action-button:hover{background:#806b57;color:#f8f4ed}
+.auth-card{margin-top:35px;padding:25px;background:rgba(250,247,241,.72);border-radius:18px;text-align:center}
+.auth-card h2{font-size:17px;font-weight:400;letter-spacing:2px;margin-top:0}
+.auth-card p,.status{font-size:13px;color:#927d68;line-height:1.8}
+.auth-card input{display:block;width:100%;margin:12px 0;padding:12px;border:1px solid #c9b8a5;border-radius:8px;background:#fffaf3;color:#5c4636;font-size:14px}
+.auth-card button{margin:5px;padding:10px 18px;border:1px solid #b8a38c;border-radius:24px;background:transparent;color:#806b57;cursor:pointer}
+.auth-card button:hover{background:#806b57;color:white}
+[hidden]{display:none!important}
+@media(max-width:600px){
+ .container{padding:55px 0}
+ h1{font-size:36px;letter-spacing:7px}
+ .card{height:220px}
+ .card-front,.card-back{padding:28px}
+ .days{font-size:34px}
+}
+</style>
 </head>
 
-
 <body>
+<main class="container">
+  <div class="leaf">
+    <svg viewBox="0 0 50 50">
+      <path d="M25 40 C24 29,17 20,8 17 C9 27,15 36,25 40"/>
+      <path d="M25 40 C26 29,33 20,42 17 C41 27,35 36,25 40"/>
+      <path d="M25 40 C25 31,25 23,25 14"/>
+    </svg>
+  </div>
 
-  <main class="container">
+  <h1>纪念日</h1>
+  <div class="date">2026 · 10 · 02</div>
 
+  <div class="card" id="card">
+    <div class="card-inner">
+      <div class="card-front" id="memorial"></div>
+      <div class="card-back">
+        第一次做网站的这一天，<br>
+        也值得被好好记住。<br>
+        愿你以后回头看时，<br>
+        还记得自己是从这里开始的。
+      </div>
+    </div>
+  </div>
+  <div class="hint">点击卡片看看</div>
 
-    <!-- 叶子 -->
+  <section class="time-card">
+    <div class="time-title">从这一天开始</div>
+    <div class="days"><span id="daysNumber">0</span><span>天</span></div>
+    <div class="time-subtitle">我已经做网站走了这么远</div>
+  </section>
 
-    <div class="leaf">
+  <section class="records">
+    <div class="records-title">成长记录</div>
 
-      <svg viewBox="0 0 50 50">
-
-        <path d="
-          M25 40
-          C24 29, 17 20, 8 17
-          C9 27, 15 36, 25 40
-        " />
-
-        <path d="
-          M25 40
-          C26 29, 33 20, 42 17
-          C41 27, 35 36, 25 40
-        " />
-
-        <path d="
-          M25 40
-          C25 31, 25 23, 25 14
-        " />
-
-      </svg>
-
+    <div class="auth-card" id="authCard">
+      <h2>私人记录</h2>
+      <p>登录自己的账号，查看和管理成长记录。访客无法查看这些内容。</p >
+      <form id="loginForm">
+        <input id="email" type="email" autocomplete="username" placeholder="你的邮箱" required>
+        <input id="password" type="password" autocomplete="current-password" placeholder="登录密码" required>
+        <button type="submit">登录</button>
+      </form>
+      <div class="status" id="authStatus" role="status">请使用你在 Supabase 创建的邮箱和密码登录。</div>
     </div>
 
-
-    <h1>纪念日</h1>
-
-
-    <div class="date">
-      2026 · 10 · 02
-    </div>
-
-
-    <!-- ===== 第一张卡片 ===== -->
-
-    <div class="card" id="card">
-
-      <div class="card-inner">
-
-        <div class="card-front" id="memorial"></div>
-
-        <div class="card-back">
-
-          第一次做网站的这一天，<br>
-          也值得被好好记住。<br>
-          愿你以后回头看时，<br>
-          还记得自己是从这里开始的。
-
-        </div>
-
-      </div>
-
-    </div>
-
-
-    <div class="hint">
-      点击卡片看看
-    </div>
-
-
-    <!-- ===== 已经走过多少天 ===== -->
-
-    <section class="time-card">
-
-      <div class="time-title">
-        从这一天开始
-      </div>
-
-      <div class="days">
-
-        <span id="daysNumber">0</span>
-
-        <span>天</span>
-
-      </div>
-
-      <div class="time-subtitle">
-        我已经做网站走了这么远
-      </div>
-
-    </section>
-
-
-    <!-- ===== 成长记录 ===== -->
-
-    <section class="records">
-
-      <div class="records-title">
-        成长记录
-      </div>
-
-
+    <div id="privateArea" hidden>
+      <p class="status" id="privateStatus" role="status"></p >
       <div id="recordList"></div>
+      <div style="text-align:center">
+        <button class="add-button" id="addButton" type="button">＋ 记录一个新的日子</button>
+        <button class="action-button" id="logoutButton" type="button">退出登录</button>
+      </div>
+    </div>
+  </section>
+</main>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* 把下面两项替换成你自己的 Supabase 信息 */
+const SUPABASE_URL = "https://eztmqrnjrrmtotpnyuwx.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_30N2roj2olTA4IH_fLtNYw_q7mM6m6G";
 
-      <button class="add-button" onclick="addRecord()">
-        ＋ 记录一个新的日子
-      </button>
+const startDate = new Date(2026, 9, 2);
+const today = new Date();
+const start = new Date(2026, 9, 2);
+const now = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+const diffDays = Math.max(0, Math.floor((now - start) / 86400000));
 
-    </section>
+document.getElementById("daysNumber").textContent = diffDays;
+document.getElementById("memorial").textContent =
+  diffDays === 0 ? "今天是第一次做网站的日子" :
+  "第一次做网站，已经过去了 " + diffDays + " 天";
 
+document.getElementById("card").addEventListener("click", () => {
+  document.getElementById("card").classList.toggle("flipped");
+});
 
-  </main>
+const authCard = document.getElementById("authCard");
+const privateArea = document.getElementById("privateArea");
+const authStatus = document.getElementById("authStatus");
+const privateStatus = document.getElementById("privateStatus");
+const recordList = document.getElementById("recordList");
 
+let supabaseClient = null;
+let currentUser = null;
 
-  <script>
+function setLoggedOut(message) {
+  currentUser = null;
+  authCard.hidden = false;
+  privateArea.hidden = true;
+  recordList.replaceChildren();
+  if (message) authStatus.textContent = message;
+}
 
-    /* =================================
-       第一次做网站的日期
-    ================================= */
+function formatDate(value) {
+  if (!value) return "";
+  const parts = value.split("-");
+  if (parts.length === 3) return parts.join(" · ");
+  return value;
+}
 
-    var startDate = new Date(2026, 9, 2);
+function addTextElement(parent, className, value) {
+  const element = document.createElement("div");
+  element.className = className;
+  element.textContent = value ?? "";
+  parent.appendChild(element);
+  return element;
+}
 
+async function loadRecords() {
+  if (!currentUser) return;
 
-    /* =================================
-       今天
-    ================================= */
+  privateStatus.textContent = "正在读取你的记录……";
+  recordList.replaceChildren();
 
-    var today = new Date();
+  const { data, error } = await supabaseClient
+    .from("website_records")
+    .select("id, record_date, text")
+    .eq("user_id", currentUser.id)
+    .order("created_at", { ascending: false });
 
+  if (error) {
+    privateStatus.textContent = "读取失败：" + error.message;
+    return;
+  }
 
-    /*
-      把时间归零，只比较日期
-    */
+  if (!data || data.length === 0) {
+    privateStatus.textContent = "这里还没有记录，可以添加第一条。";
+    return;
+  }
 
-    var start = new Date(
-      startDate.getFullYear(),
-      startDate.getMonth(),
-      startDate.getDate()
-    );
+  privateStatus.textContent = "这些记录只有你登录后才能查看。";
 
-    var now = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      today.getDate()
-    );
+  data.forEach(record => {
+    const card = document.createElement("div");
+    card.className = "record";
+    addTextElement(card, "record-date", formatDate(record.record_date));
+    addTextElement(card, "record-text", record.text);
 
+    const actions = document.createElement("div");
+    actions.style.textAlign = "right";
 
-    /* =================================
-       计算过去了多少天
-    ================================= */
+    const editButton = document.createElement("button");
+    editButton.className = "action-button";
+    editButton.type = "button";
+    editButton.textContent = "修改";
+    editButton.addEventListener("click", async () => {
+      const updatedText = prompt("修改这条成长记录：", record.text);
+      if (updatedText === null || !updatedText.trim()) return;
 
-    var diffTime = now - start;
+      const { error } = await supabaseClient
+        .from("website_records")
+        .update({ text: updatedText.trim() })
+        .eq("id", record.id)
+        .eq("user_id", currentUser.id);
 
-    var diffDays = Math.floor(
-      diffTime / (1000 * 60 * 60 * 24)
-    );
-
-
-    if (diffDays < 0) {
-      diffDays = 0;
-    }
-
-
-    document.getElementById("daysNumber").innerText =
-      diffDays;
-
-
-    /* =================================
-       第一张卡片的文字
-    ================================= */
-
-    var message = "";
-
-    if (diffDays === 0) {
-
-      message =
-        "今天是第一次做网站的日子 🎉";
-
-    } else {
-
-      message =
-        "第一次做网站，已经过去了 "
-        + diffDays
-        + " 天";
-
-    }
-
-
-    document.getElementById("memorial").innerText =
-      message;
-
-
-    /* =================================
-       卡片翻面
-    ================================= */
-
-    var card = document.getElementById("card");
-
-    card.addEventListener("click", function () {
-
-      card.classList.toggle("flipped");
-
+      if (error) {
+        alert("修改失败：" + error.message);
+      } else {
+        await loadRecords();
+      }
     });
 
+    const deleteButton = document.createElement("button");
+    deleteButton.className = "action-button";
+    deleteButton.type = "button";
+    deleteButton.textContent = "删除";
+    deleteButton.addEventListener("click", async () => {
+      if (!confirm("确定删除这条成长记录吗？")) return;
 
-    /* =================================
-       成长记录
-       
-       localStorage 会把记录保存
-       在这个浏览器里
-    ================================= */
+      const { error } = await supabaseClient
+        .from("website_records")
+        .delete()
+        .eq("id", record.id)
+        .eq("user_id", currentUser.id);
 
-    var records =
-      JSON.parse(
-        localStorage.getItem("websiteRecords")
-      ) || [];
-
-
-    /* =================================
-       显示记录
-    ================================= */
-
-    function showRecords() {
-
-      var list =
-        document.getElementById("recordList");
-
-      list.innerHTML = "";
-
-
-      records.forEach(function(record) {
-
-        var div =
-          document.createElement("div");
-
-        div.className = "record";
-
-
-        div.innerHTML =
-
-          '<div class="record-date">'
-          + record.date +
-          '</div>'
-
-          +
-
-          '<div class="record-text">'
-          + record.text +
-          '</div>';
-
-
-        list.appendChild(div);
-
-      });
-
-    }
-
-
-    /* =================================
-       添加新的成长记录
-    ================================= */
-
-    function addRecord() {
-
-      var text =
-        prompt(
-          "今天做了什么？\n\n例如：第一次学会用 JavaScript 做互动。"
-        );
-
-
-      if (!text) {
-        return;
+      if (error) {
+        alert("删除失败：" + error.message);
+      } else {
+        await loadRecords();
       }
+    });
 
+    actions.append(editButton, deleteButton);
+    card.appendChild(actions);
+    recordList.appendChild(card);
+  });
+}
 
-      var todayText =
-        today.getFullYear()
-        + " · "
-        + String(today.getMonth() + 1).padStart(2, "0")
-        + " · "
-        + String(today.getDate()).padStart(2, "0");
+async function showSignedInUser(user) {
+  currentUser = user;
+  authCard.hidden = true;
+  privateArea.hidden = false;
+  await loadRecords();
+}
 
+document.getElementById("loginForm").addEventListener("submit", async event => {
+  event.preventDefault();
 
-      records.push({
+  if (!supabaseClient) {
+    authStatus.textContent = "Supabase 配置不正确，请检查 Project URL 和 Publishable key。";
+    return;
+  }
 
-        date: todayText,
+  authStatus.textContent = "正在登录……";
 
-        text: text
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
 
-      });
+  const { data, error } = await supabaseClient.auth.signInWithPassword({
+    email,
+    password
+  });
 
+  if (error) {
+    authStatus.textContent = "登录失败，请检查邮箱和密码。详细信息：" + error.message;
+    return;
+  }
 
-      /* 保存 */
+  await showSignedInUser(data.user);
+});
 
-      localStorage.setItem(
-        "websiteRecords",
-        JSON.stringify(records)
-      );
+document.getElementById("addButton").addEventListener("click", async () => {
+  if (!currentUser) return;
 
+  const text = prompt("今天做了什么？");
+  if (text === null || !text.trim()) return;
 
-      /* 重新显示 */
+  const d = new Date();
+  const dateText = d.getFullYear() + "-" +
+    String(d.getMonth() + 1).padStart(2, "0") + "-" +
+    String(d.getDate()).padStart(2, "0");
 
-      showRecords();
+  const { error } = await supabaseClient
+    .from("website_records")
+    .insert({
+      record_date: dateText,
+      text: text.trim(),
+      user_id: currentUser.id
+    });
 
+  if (error) {
+    alert("保存失败：" + error.message);
+  } else {
+    await loadRecords();
+  }
+});
+
+document.getElementById("logoutButton").addEventListener("click", async () => {
+  const { error } = await supabaseClient.auth.signOut();
+  if (error) {
+    alert("退出登录失败：" + error.message);
+    return;
+  }
+  setLoggedOut("你已退出登录。成长记录已隐藏。");
+});
+
+async function initialize() {
+  if (!window.supabase ||
+      SUPABASE_URL.includes("粘贴在这里") ||
+      SUPABASE_PUBLISHABLE_KEY.includes("粘贴在这里")) {
+    authStatus.textContent = "请先在代码中填写自己的 Supabase Project URL 和 Publishable key。";
+    return;
+  }
+
+  try {
+    supabaseClient = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY
+    );
+
+    const { data, error } = await supabaseClient.auth.getSession();
+    if (error) throw error;
+
+    if (data.session?.user) {
+      await showSignedInUser(data.session.user);
     }
+  } catch (error) {
+    authStatus.textContent = "初始化失败，请检查网络和 Supabase 配置。";
+  }
+}
 
-
-    /* 第一次打开时显示记录 */
-
-    showRecords();
-
-  </script>
-
+setLoggedOut();
+initialize();
+</script>
 </body>
-
 </html>
