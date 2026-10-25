@@ -57,6 +57,128 @@ button{font-family:inherit}.add-button,.action-button{display:inline-block;margi
 .comment-form textarea{width:100%;padding:10px;border:1px solid #c9b8a5;border-radius:9px;background:#fffaf3;color:#5c4636;font:inherit;font-size:13px;resize:vertical}
 [hidden]{display:none!important}
 @media(max-width:600px){.container{padding:45px 0}h1{font-size:36px;letter-spacing:7px}.card{height:220px}.card-front,.card-back{padding:28px}.days{font-size:34px}.inbox{padding:20px 12px}}
+
+/* refined editorial layout */
+.app-layout{
+  grid-template-columns:150px minmax(0,1fr);
+  gap:46px;
+  max-width:1180px;
+  padding:30px 34px;
+}
+.sidebar{
+  top:30px;
+  padding:10px 0;
+  background:transparent;
+  border:0;
+  border-radius:0;
+  box-shadow:none;
+}
+.sidebar-brand{
+  font-size:16px;
+  letter-spacing:5px;
+  margin:8px 0 7px;
+  text-align:left;
+  padding-left:12px;
+}
+.sidebar-note{
+  font-size:10px;
+  line-height:1.8;
+  text-align:left;
+  margin:0 0 34px;
+  padding-left:12px;
+  color:#9c8977;
+}
+.nav-button{
+  position:relative;
+  margin:5px 0;
+  padding:12px 12px;
+  border:0;
+  border-radius:7px;
+  color:#897663;
+  font-size:13px;
+  letter-spacing:.5px;
+  transition:background .2s ease,color .2s ease;
+}
+.nav-button.active{
+  background:rgba(255,250,243,.55);
+  color:#5c4636;
+  border:0;
+}
+.nav-button.active::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:25%;
+  bottom:25%;
+  width:2px;
+  background:#a88d70;
+}
+.nav-button:hover{background:rgba(255,250,243,.42)}
+.main-content .container{
+  max-width:760px;
+  padding:34px 0 58px;
+}
+.container{max-width:760px}
+h1{font-size:39px;letter-spacing:10px;font-weight:400;margin:14px 0 8px}
+.date{font-size:11px;letter-spacing:4px;color:#a18c78}
+.leaf{opacity:.7;margin-bottom:12px}
+.card{
+  max-width:520px;
+  height:178px;
+  margin:32px auto 0;
+}
+.card-front,.card-back{
+  padding:28px;
+  border-radius:14px;
+  box-shadow:0 10px 28px rgba(91,68,48,.07);
+  background:rgba(250,247,241,.78);
+}
+.card-front{font-size:18px;letter-spacing:.7px}
+.card-back{font-size:16px;line-height:1.9}
+.card-back::before{top:17px}
+.hint{margin-top:15px;font-size:11px;color:#a18c78;letter-spacing:1px}
+.time-card{
+  max-width:520px;
+  margin:42px auto 0;
+  padding:25px 22px;
+  background:rgba(250,247,241,.38);
+  border:1px solid rgba(120,90,60,.09);
+  border-radius:12px;
+  box-shadow:none;
+}
+.time-title,.time-subtitle{font-size:12px;color:#907c69}
+.days{font-size:28px;margin:14px 0 7px}
+.records{margin-top:18px}
+.records-title{font-size:20px;letter-spacing:3px;margin-bottom:24px}
+.auth-card{box-shadow:none;border:1px solid rgba(120,90,60,.09)}
+.inbox{
+  margin-top:16px;
+  padding:26px 24px;
+  background:rgba(250,247,241,.35);
+  border:1px solid rgba(120,90,60,.09);
+  border-radius:14px;
+}
+.thread-card{box-shadow:none}
+@media(max-width:700px){
+  .app-layout{display:block;padding:10px 16px}
+  .sidebar{
+    position:sticky;top:0;z-index:10;
+    display:flex;align-items:center;gap:4px;
+    padding:7px 0;margin:0 0 10px;
+    overflow-x:auto;
+    background:rgba(232,220,203,.94);
+    border-bottom:1px solid rgba(120,90,60,.1);
+  }
+  .sidebar-brand,.sidebar-note{display:none}
+  .nav-button{flex:1;white-space:nowrap;text-align:center;margin:0;padding:10px 7px;font-size:12px}
+  .nav-button.active::before{left:20%;right:20%;top:auto;bottom:2px;width:auto;height:2px}
+  .main-content .container{padding:20px 0 36px}
+  h1{font-size:32px;letter-spacing:7px}
+  .card{height:165px;margin-top:26px}
+  .time-card{margin-top:30px;padding:22px 16px}
+  .inbox{padding:20px 14px}
+}
+
 </style>
 </head>
 <body>
