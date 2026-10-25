@@ -6,6 +6,19 @@
 <title>纪念日 · 成长记录与信箱</title>
 <style>
 *{box-sizing:border-box}
+.app-layout{display:grid;grid-template-columns:190px minmax(0,1fr);gap:28px;max-width:1120px;margin:0 auto;padding:28px 24px;min-height:100vh}
+.sidebar{position:sticky;top:24px;align-self:start;padding:22px 14px;background:rgba(250,247,241,.72);border:1px solid rgba(120,90,60,.12);border-radius:18px;box-shadow:0 8px 24px rgba(91,68,48,.06)}
+.sidebar-brand{font-size:17px;letter-spacing:3px;text-align:center;margin:4px 0 8px}
+.sidebar-note{font-size:11px;color:#a08b76;text-align:center;margin:0 0 22px}
+.nav-button{display:block;width:100%;margin:7px 0;padding:13px 12px;text-align:left;border:1px solid transparent;border-radius:11px;background:transparent;color:#806b57;font:inherit;font-size:14px;cursor:pointer}
+.nav-button.active{background:#e8dccb;border-color:#d4c1ab;color:#5c4636}
+.nav-button:hover{background:rgba(232,220,203,.7)}
+.main-content{min-width:0}
+.page-panel{min-width:0}
+.page-panel[hidden]{display:none!important}
+.main-content .container{width:100%;max-width:700px;padding:26px 0 50px}
+@media(max-width:700px){.app-layout{display:block;padding:12px;}.sidebar{position:sticky;top:8px;z-index:10;display:flex;align-items:center;gap:6px;padding:8px;margin-bottom:12px;overflow-x:auto}.sidebar-brand,.sidebar-note{display:none}.nav-button{flex:1;white-space:nowrap;text-align:center;margin:0;padding:11px 10px;font-size:13px}.main-content .container{padding:18px 0 36px}}
+
 body{margin:0;min-height:100vh;font-family:"Microsoft YaHei","PingFang SC",sans-serif;color:#5c4636;background-color:#e8dccb;background-image:repeating-linear-gradient(92deg,rgba(120,90,60,.025) 0,rgba(120,90,60,.025) 1px,transparent 1px,transparent 80px),repeating-linear-gradient(4deg,rgba(255,255,255,.18) 0,rgba(255,255,255,.18) 2px,transparent 2px,transparent 110px)}
 .container{width:90%;max-width:650px;margin:0 auto;padding:60px 0;text-align:center}
 .leaf{width:42px;height:42px;margin:0 auto 12px;opacity:.72}.leaf svg{width:100%;height:100%}.leaf path{fill:none;stroke:#806b57;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
@@ -47,7 +60,17 @@ button{font-family:inherit}.add-button,.action-button{display:inline-block;margi
 </style>
 </head>
 <body>
-<main class="container">
+<div class="app-layout">
+  <aside class="sidebar" aria-label="主导航">
+    <div class="sidebar-brand">纪念日</div>
+    <div class="sidebar-note">把值得记住的日子收好</div>
+    <button class="nav-button active" type="button" data-page="home">纪念日主页</button>
+    <button class="nav-button" type="button" data-page="records">我的成长记录</button>
+    <button class="nav-button" type="button" data-page="inbox">KK 和我的信箱</button>
+  </aside>
+  <div class="main-content">
+  <section class="page-panel" id="homePanel">
+  <main class="container">
   <div class="leaf"><svg viewBox="0 0 50 50"><path d="M25 40 C24 29,17 20,8 17 C9 27,15 36,25 40"/><path d="M25 40 C26 29,33 20,42 17 C41 27,35 36,25 40"/><path d="M25 40 C25 31,25 23,25 14"/></svg></div>
   <h1>纪念日</h1>
   <div class="date">2026 · 10 · 02</div>
@@ -58,6 +81,10 @@ button{font-family:inherit}.add-button,.action-button{display:inline-block;margi
   <div class="hint">点击卡片看看</div>
   <section class="time-card"><div class="time-title">从这一天开始</div><div class="days"><span id="daysNumber">0</span><span>天</span></div><div class="time-subtitle">我已经做网站走了这么远</div></section>
 
+  </main>
+  </section>
+  <section class="page-panel" id="recordsPanel" hidden>
+  <main class="container">
   <section class="records">
     <div class="records-title">我的成长记录</div>
     <div class="auth-card" id="authCard">
@@ -78,7 +105,13 @@ button{font-family:inherit}.add-button,.action-button{display:inline-block;margi
         <button class="action-button" id="logoutButton" type="button">退出登录</button>
       </div>
 
-      <section class="inbox">
+    </div>
+  </section>
+  </main>
+  </section>
+  <section class="page-panel" id="inboxPanel" hidden>
+  <main class="container">
+      <section class="inbox" id="inboxSection">
         <div class="records-title">KK 和我的信箱</div>
         <p class="status inbox-intro">可以为每个话题单独写信，点开话题后继续对话。</p>
         <div class="inbox-create">
@@ -100,9 +133,10 @@ button{font-family:inherit}.add-button,.action-button{display:inline-block;margi
           <div id="messageStatus" class="status" role="status"></div>
         </div>
       </section>
-    </div>
+  </main>
   </section>
-</main>
+  </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -116,6 +150,20 @@ const diffDays = Math.max(0, Math.floor((now - start) / 86400000));
 document.getElementById("daysNumber").textContent = diffDays;
 document.getElementById("memorial").textContent = diffDays === 0 ? "今天是第一次做网站的日子" : "第一次做网站，已经过去了 " + diffDays + " 天";
 document.getElementById("card").addEventListener("click", () => document.getElementById("card").classList.toggle("flipped"));
+
+const navButtons = [...document.querySelectorAll(".nav-button")];
+const pagePanels = {
+  home: document.getElementById("homePanel"),
+  records: document.getElementById("recordsPanel"),
+  inbox: document.getElementById("inboxPanel")
+};
+const inboxSection = document.getElementById("inboxSection");
+function showPage(page) {
+  Object.entries(pagePanels).forEach(([key, panel]) => { panel.hidden = key !== page; });
+  navButtons.forEach(button => button.classList.toggle("active", button.dataset.page === page));
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+navButtons.forEach(button => button.addEventListener("click", () => showPage(button.dataset.page)));
 
 const authCard = document.getElementById("authCard");
 const privateArea = document.getElementById("privateArea");
@@ -137,6 +185,7 @@ function setLoggedOut(message) {
   currentThread = null;
   authCard.hidden = false;
   privateArea.hidden = true;
+  inboxSection.hidden = true;
   recordList.replaceChildren();
   threadList.replaceChildren();
   messageList.replaceChildren();
@@ -404,6 +453,7 @@ async function showSignedInUser(user) {
   currentUser = user;
   authCard.hidden = true;
   privateArea.hidden = false;
+  inboxSection.hidden = false;
   await loadRecords();
   await loadThreads();
 }
