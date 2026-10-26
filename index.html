@@ -179,11 +179,37 @@ h1{font-size:39px;letter-spacing:10px;font-weight:400;margin:14px 0 8px}
   .inbox{padding:20px 14px}
 }
 
+
+/* compact, collapsible navigation rail */
+.app-layout{display:block;max-width:1180px;padding:30px 34px;margin:0 auto}
+.sidebar{position:fixed;z-index:30;left:18px;top:42%;transform:translateY(-50%);width:48px;padding:7px;background:rgba(250,247,241,.92);border:1px solid rgba(120,90,60,.13);border-radius:15px;box-shadow:0 5px 20px rgba(91,68,48,.06);backdrop-filter:blur(12px);transition:width .22s ease,padding .22s ease}
+.sidebar-toggle{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;width:32px;height:36px;margin:0 auto;border:0;border-radius:9px;background:transparent;cursor:pointer}
+.sidebar-toggle:hover{background:rgba(232,220,203,.7)}
+.sidebar-toggle span{display:block;width:15px;height:1.5px;border-radius:2px;background:#806b57;transition:transform .2s ease}
+.sidebar-brand,.sidebar-note,.nav-button{display:none}
+.sidebar.expanded{width:178px;padding:13px 10px;transform:none;top:calc(42% - 25px)}
+.sidebar.expanded .sidebar-toggle{margin:0 0 10px auto}
+.sidebar.expanded .sidebar-brand{display:block;font-size:15px;letter-spacing:4px;text-align:left;padding-left:10px;margin:4px 0 5px}
+.sidebar.expanded .sidebar-note{display:block;text-align:left;padding-left:10px;margin:0 0 18px;font-size:10px;color:#9c8977}
+.sidebar.expanded .nav-button{display:block;width:100%;margin:4px 0;padding:11px 10px;text-align:left;font-size:13px;border:0;border-radius:8px;background:transparent;color:#897663;cursor:pointer}
+.sidebar.expanded .nav-button.active{background:rgba(232,220,203,.65);color:#5c4636}
+.sidebar.expanded .nav-button.active::before{content:none}
+.sidebar.expanded .nav-button:hover{background:rgba(232,220,203,.45)}
+.main-content .container{max-width:760px}
+@media(max-width:700px){
+ .app-layout{display:block;padding:12px 16px}
+ .sidebar{left:10px;top:18px;transform:none;width:42px;padding:4px;border-radius:12px}
+ .sidebar-toggle{width:32px;height:34px}
+ .sidebar.expanded{left:10px;top:18px;width:178px;transform:none}
+ .main-content .container{padding:20px 0 36px}
+}
+
 </style>
 </head>
 <body>
 <div class="app-layout">
-  <aside class="sidebar" aria-label="主导航">
+  <aside class="sidebar" id="sidebarNav" aria-label="主导航">
+    <button class="sidebar-toggle" id="sidebarToggle" type="button" aria-label="打开导航" aria-expanded="false" title="打开导航"><span></span><span></span><span></span></button>
     <div class="sidebar-brand">纪念日</div>
     <div class="sidebar-note">把值得记住的日子收好</div>
     <button class="nav-button active" type="button" data-page="home">纪念日主页</button>
@@ -285,7 +311,19 @@ function showPage(page) {
   navButtons.forEach(button => button.classList.toggle("active", button.dataset.page === page));
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
-navButtons.forEach(button => button.addEventListener("click", () => showPage(button.dataset.page)));
+const sidebarNav = document.getElementById("sidebarNav");
+const sidebarToggle = document.getElementById("sidebarToggle");
+function setSidebarOpen(open) {
+  sidebarNav.classList.toggle("expanded", open);
+  sidebarToggle.setAttribute("aria-expanded", String(open));
+  sidebarToggle.setAttribute("aria-label", open ? "收起导航" : "打开导航");
+  sidebarToggle.title = open ? "收起导航" : "打开导航";
+}
+sidebarToggle.addEventListener("click", () => setSidebarOpen(!sidebarNav.classList.contains("expanded")));
+navButtons.forEach(button => button.addEventListener("click", () => {
+  showPage(button.dataset.page);
+  setSidebarOpen(false);
+}));
 
 const authCard = document.getElementById("authCard");
 const privateArea = document.getElementById("privateArea");
