@@ -204,6 +204,38 @@ h1{font-size:39px;letter-spacing:10px;font-weight:400;margin:14px 0 8px}
  .main-content .container{padding:20px 0 36px}
 }
 
+
+/* full-height, ChatGPT-style expandable sidebar */
+.sidebar{
+  position:fixed; left:0; top:0; bottom:0; height:100vh; width:54px;
+  transform:none; padding:14px 9px; border-radius:0 14px 14px 0;
+  border:0; border-right:1px solid rgba(120,90,60,.12);
+  background:rgba(248,245,238,.94); box-shadow:3px 0 18px rgba(91,68,48,.035);
+  backdrop-filter:blur(14px); overflow:hidden;
+  transition:width .22s ease; display:flex; flex-direction:column; align-items:stretch;
+}
+.sidebar-toggle{flex:0 0 36px; width:36px;height:36px;margin:0 0 22px 0;align-self:flex-start}
+.sidebar-brand,.sidebar-note,.nav-button{display:none}
+.sidebar.expanded{left:0;top:0;bottom:0;height:100vh;width:246px;transform:none;padding:14px 12px;border-radius:0 14px 14px 0}
+.sidebar.expanded .sidebar-toggle{margin:0 0 22px 0;align-self:flex-start}
+.sidebar.expanded .sidebar-brand{display:block;font-size:16px;letter-spacing:4px;text-align:left;padding:0 12px;margin:2px 0 5px}
+.sidebar.expanded .sidebar-note{display:block;text-align:left;padding:0 12px;margin:0 0 28px;font-size:10px;color:#9c8977}
+.sidebar.expanded .nav-button{display:block;flex:0 0 auto;width:100%;margin:3px 0;padding:12px 12px;text-align:left;font-size:13px;border:0;border-radius:9px;background:transparent;color:#897663;cursor:pointer;white-space:nowrap}
+.sidebar.expanded .nav-button.active{background:rgba(232,220,203,.65);color:#5c4636}
+.sidebar.expanded .nav-button.active::before{content:none}
+.sidebar.expanded .nav-button:hover{background:rgba(232,220,203,.45)}
+.main-content{margin-left:54px;transition:margin-left .22s ease}
+.app-layout{max-width:none;padding:30px 34px}
+.main-content .container{max-width:760px}
+@media(max-width:700px){
+ .sidebar{left:0;top:0;bottom:0;height:100dvh;width:48px;padding:10px 6px;border-radius:0 12px 12px 0}
+ .sidebar-toggle{width:34px;height:36px;margin-bottom:18px}
+ .sidebar.expanded{left:0;top:0;bottom:0;height:100dvh;width:min(246px,82vw);padding:10px 10px}
+ .main-content{margin-left:38px}
+ .app-layout{padding:18px 12px}
+ .main-content .container{padding:20px 0 36px}
+}
+
 </style>
 </head>
 <body>
