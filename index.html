@@ -423,7 +423,7 @@ function formatKkResult(result) {
   if (result.used_today !== undefined && result.used_today !== null) {
     parts.push("今日已使用：" + result.used_today);
   }
-  return parts.length ? parts.join("；") : "接口检查完成。";
+  return parts.length ? parts.join("\n") : "接口检查完成。";
 }
 
 
@@ -599,7 +599,7 @@ async function loadRecords() {
       privateStatus.textContent = "正在检查 AI 回复接口……";
       try {
         const result = await callKkReply("record", record.id, "ai_reply");
-        privateStatus.textContent = "接口检查通过\\n消息读取正常 · 真实 AI 尚未启用";
+        privateStatus.textContent = formatKkResult(result);
         privateStatus.style.whiteSpace = "pre-line";
       } catch (error) {
         privateStatus.textContent = "AI 尚未启用或检查未通过：" + error.message;
@@ -754,7 +754,7 @@ document.getElementById("aiInboxReplyButton").addEventListener("click", async ()
   messageStatus.textContent = "正在检查 AI 回复接口……";
   try {
     const result = await callKkReply("inbox", currentThread.id, "ai_reply");
-    messageStatus.textContent = "接口检查通过\\n消息读取正常 · 真实 AI 尚未启用";
+    messageStatus.textContent = formatKkResult(result);
     messageStatus.style.whiteSpace = "pre-line";
   } catch (error) {
     messageStatus.textContent = "AI 尚未启用或检查未通过：" + error.message;
