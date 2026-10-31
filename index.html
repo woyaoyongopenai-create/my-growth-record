@@ -408,6 +408,24 @@ async function callKkReply(mode, targetId, action) {
   return result;
 }
 
+// 将服务端返回的真实检查结果显示在页面上，不再使用固定提示。
+function formatKkResult(result) {
+  const parts = [];
+  if (result.message) parts.push(result.message);
+  if (result.ai_enabled === true) {
+    parts.push("真实 AI：已启用");
+  } else if (result.ai_enabled === false) {
+    parts.push("真实 AI：尚未启用");
+  }
+  if (result.content_length !== undefined && result.content_length !== null) {
+    parts.push("读取字符数：" + result.content_length);
+  }
+  if (result.used_today !== undefined && result.used_today !== null) {
+    parts.push("今日已使用：" + result.used_today);
+  }
+  return parts.length ? parts.join("；") : "接口检查完成。";
+}
+
 
 function setLoggedOut(message) {
   currentUser = null;
@@ -580,8 +598,8 @@ async function loadRecords() {
       aiReplyButton.disabled = true;
       privateStatus.textContent = "正在检查 AI 回复接口……";
       try {
-        await callKkReply("record", record.id, "ai_reply");
-        privateStatus.textContent = "接口检查通过。";
+        const result = await callKkReply("record", record.id, "ai_reply");
+        privateStatus.textContent = formatKkResult(result);
       } catch (error) {
         privateStatus.textContent = "AI 尚未启用或检查未通过：" + error.message;
       } finally {
@@ -734,8 +752,8 @@ document.getElementById("aiInboxReplyButton").addEventListener("click", async ()
   button.disabled = true;
   messageStatus.textContent = "正在检查 AI 回复接口……";
   try {
-    await callKkReply("inbox", currentThread.id, "ai_reply");
-    messageStatus.textContent = "接口检查通过。";
+    const result = await callKkReply("inbox", currentThread.id, "ai_reply");
+    messageStatus.textContent = formatKkResult(result);
   } catch (error) {
     messageStatus.textContent = "AI 尚未启用或检查未通过：" + error.message;
   } finally {
