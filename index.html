@@ -282,7 +282,7 @@ h1{font-size:39px;letter-spacing:10px;font-weight:400;margin:14px 0 8px}
       <div id="recordList"></div>
       <div style="text-align:center">
         <button class="add-button" id="addButton" type="button">＋ 记录一个新的日子</button>
-        <button class="action-button" id="logoutButton" type="button">退出登录</button>
+        <button class="action-button" id="testKkButton" type="button">测试 KK 连接</button><button class="action-button" id="logoutButton" type="button">退出登录</button><div class="status" id="testKkStatus" role="status"></div>
       </div>
 
     </div>
@@ -676,6 +676,27 @@ document.getElementById("addButton").addEventListener("click", async () => {
   });
   if (error) alert("保存失败：" + error.message); else await loadRecords();
 });
+document.getElementById("testKkButton").addEventListener("click", async () => {
+ const status = document.getElementById("testKkStatus");
+ const button = document.getElementById("testKkButton");
+ if (!currentUser || !supabaseClient) { status.textContent = "请先登录"; return; }
+ button.disabled = true;
+ status.textContent = "正在测试连接……";
+ try {
+  const { data, error } = await supabaseClient.auth.getSession();
+  if (error || !data.session?.access_token) { status.textContent = "登录状态无效，请重新登录"; return; }
+  const response = await fetch(SUPABASE_URL + "/functions/v1/kk-ai-reply", {
+   method: "POST",
+   headers: { "Content-Type":"application/json", "Authorization":"Bearer " + data.session.access_token, "apikey":SUPABASE_PUBLISHABLE_KEY },
+   body: JSON.stringify({})
+  });
+  const raw = await response.text();
+  let result; try { result = JSON.parse(raw); } catch { result = {error:raw.slice(0,200)}; }
+  status.textContent = "HTTP " + response.status + "：" + (result.error || result.message || result.reply || JSON.stringify(result));
+ } catch (error) { status.textContent = "连接失败：" + error.message; }
+ finally { button.disabled = false; }
+});
+
 document.getElementById("logoutButton").addEventListener("click", async () => {
   const { error } = await supabaseClient.auth.signOut();
   if (error) {
