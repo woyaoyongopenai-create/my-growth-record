@@ -599,7 +599,8 @@ async function loadRecords() {
       privateStatus.textContent = "正在检查 AI 回复接口……";
       try {
         const result = await callKkReply("record", record.id, "ai_reply");
-        privateStatus.textContent = formatKkResult(result);
+        privateStatus.textContent = "接口检查通过\\n消息读取正常 · 真实 AI 尚未启用";
+        privateStatus.style.whiteSpace = "pre-line";
       } catch (error) {
         privateStatus.textContent = "AI 尚未启用或检查未通过：" + error.message;
       } finally {
@@ -753,7 +754,8 @@ document.getElementById("aiInboxReplyButton").addEventListener("click", async ()
   messageStatus.textContent = "正在检查 AI 回复接口……";
   try {
     const result = await callKkReply("inbox", currentThread.id, "ai_reply");
-    messageStatus.textContent = formatKkResult(result);
+    messageStatus.textContent = "接口检查通过\\n消息读取正常 · 真实 AI 尚未启用";
+    messageStatus.style.whiteSpace = "pre-line";
   } catch (error) {
     messageStatus.textContent = "AI 尚未启用或检查未通过：" + error.message;
   } finally {
