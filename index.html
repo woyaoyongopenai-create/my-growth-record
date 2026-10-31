@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>纪念日 · 成长记录与信箱</title>
+<style>
+*{box-sizing:border-box}
+.app-layout{display:grid;grid-template-columns:190px minmax(0,1fr);gap:28px;max-width:1120px;margin:0 auto;padding:28px 24px;min-height:100vh}
+.sidebar{position:sticky;top:24px;align-self:start;padding:22px 14px;background:rgba(250,247,241,.72);border:1px solid rgba(120,90,60,.12);border-radius:18px;box-shadow:0 8px 24px rgba(91,68,48,.06)}
+.sidebar-brand{font-size:17px;letter-spacing:3px;text-align:center;margin:4px 0 8px}
+.sidebar-note{font-size:11px;color:#a08b76;text-align:center;margin:0 0 22px}
+.nav-button{display:block;width:100%;margin:7px 0;padding:13px 12px;text-align:left;border:1px solid transparent;border-radius:11px;background:transparent;color:#806b57;font:inherit;font-size:14px;cursor:pointer}
+.nav-button.active{background:#e8dccb;border-color:#d4c1ab;color:#5c4636}
+.nav-button:hover{background:rgba(232,220,203,.7)}
+.main-content{min-width:0}
+.page-panel{min-width:0}
+.page-panel[hidden]{display:none!important}
+.main-content .container{width:100%;max-width:700px;padding:26px 0 50px}
+@media(max-width:700px){.app-layout{display:block;padding:12px;}.sidebar{position:sticky;top:8px;z-index:10;display:flex;align-items:center;gap:6px;padding:8px;margin-bottom:12px;overflow-x:auto}.sidebar-brand,.sidebar-note{display:none}.nav-button{flex:1;white-space:nowrap;text-align:center;margin:0;padding:11px 10px;font-size:13px}.main-content .container{padding:18px 0 36px}}
+
+body{margin:0;min-height:100vh;font-family:"Microsoft YaHei","PingFang SC",sans-serif;color:#5c4636;background-color:#e8dccb;background-image:repeating-linear-gradient(92deg,rgba(120,90,60,.025) 0,rgba(120,90,60,.025) 1px,transparent 1px,transparent 80px),repeating-linear-gradient(4deg,rgba(255,255,255,.18) 0,rgba(255,255,255,.18) 2px,transparent 2px,transparent 110px)}
+.container{width:90%;max-width:650px;margin:0 auto;padding:60px 0;text-align:center}
+.leaf{width:42px;height:42px;margin:0 auto 12px;opacity:.72}.leaf svg{width:100%;height:100%}.leaf path{fill:none;stroke:#806b57;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+h1{margin:0;color:#5c4636;font-size:44px;font-weight:400;letter-spacing:10px}
+.date{margin-top:12px;color:#927d68;font-size:13px;letter-spacing:3px}
+.card{width:100%;max-width:580px;height:230px;margin:42px auto 0;perspective:1000px;cursor:pointer}
+.card-inner{position:relative;width:100%;height:100%;transition:transform .7s ease;transform-style:preserve-3d}
+.card.flipped .card-inner{transform:rotateY(180deg)}
+.card-front,.card-back{position:absolute;width:100%;height:100%;padding:40px;background:rgba(250,247,241,.94);border:1px solid rgba(120,90,60,.12);border-radius:20px;box-shadow:0 20px 45px rgba(91,68,48,.13),0 4px 10px rgba(91,68,48,.07);display:flex;justify-content:center;align-items:center;backface-visibility:hidden}
+.card-front{color:#725b48;font-size:20px;line-height:1.9;letter-spacing:1px}.card-back{transform:rotateY(180deg);color:#725b48;font-size:18px;line-height:2;letter-spacing:1px}.card-back::before{content:"✦";position:absolute;top:25px;color:#b29c85;font-size:13px}
+.hint{margin-top:18px;color:#927d68;font-size:12px;letter-spacing:2px;opacity:.7}
+.time-card{margin-top:55px;padding:35px 25px;background:rgba(250,247,241,.72);border:1px solid rgba(120,90,60,.10);border-radius:18px}
+.time-title{color:#806b57;font-size:14px;letter-spacing:3px}.days{margin-top:12px;color:#5c4636;font-size:38px;font-weight:400}.days span{font-size:16px;margin-left:5px;color:#927d68}.time-subtitle{margin-top:8px;color:#927d68;font-size:13px}
+.records{margin-top:50px;text-align:left}.records-title{text-align:center;color:#5c4636;font-size:22px;letter-spacing:4px;margin-bottom:20px}
+.record{margin-bottom:15px;padding:20px 22px;background:rgba(250,247,241,.82);border-radius:14px;border:1px solid rgba(120,90,60,.08);box-shadow:0 8px 20px rgba(91,68,48,.06)}
+.record-date{color:#a08b76;font-size:12px;letter-spacing:2px;margin-bottom:8px}.record-text{color:#725b48;font-size:15px;line-height:1.8;white-space:pre-wrap;overflow-wrap:anywhere}
+button{font-family:inherit}.add-button,.action-button{display:inline-block;margin:8px 4px 0;padding:10px 18px;border:1px solid #b8a38c;border-radius:30px;background:transparent;color:#806b57;font-size:13px;cursor:pointer}
+.add-button:hover,.action-button:hover{background:#806b57;color:#f8f4ed}
+.auth-card{margin-top:30px;padding:25px;background:rgba(250,247,241,.72);border-radius:18px;text-align:center}.auth-card h2{font-size:17px;font-weight:400;letter-spacing:2px;margin-top:0}
+.auth-card p,.status{font-size:13px;color:#927d68;line-height:1.8}.auth-card input{display:block;width:100%;margin:12px 0;padding:12px;border:1px solid #c9b8a5;border-radius:8px;background:#fffaf3;color:#5c4636;font-size:14px}
+.auth-card button{margin:5px;padding:10px 18px;border:1px solid #b8a38c;border-radius:24px;background:transparent;color:#806b57;cursor:pointer}.auth-card button:hover{background:#806b57;color:white}
+.inbox{margin-top:35px;padding:22px 16px;text-align:left;background:rgba(250,247,241,.55);border:1px solid rgba(120,90,60,.12);border-radius:18px}
+.inbox .records-title{margin-bottom:8px}.inbox-intro{text-align:center;margin:0 0 20px}
+.inbox-create{display:flex;flex-direction:column;align-items:stretch;gap:8px;margin:16px 0}
+.inbox input,.message-form textarea{width:100%;padding:12px;border:1px solid #c9b8a5;border-radius:10px;background:#fffaf3;color:#5c4636;font:inherit;font-size:14px}
+.thread-card{width:100%;display:block;margin:10px 0;padding:15px;border:1px solid rgba(120,90,60,.14);border-radius:12px;background:rgba(250,247,241,.9);color:#725b48;text-align:left;cursor:pointer}
+.thread-card strong{display:block;margin-bottom:6px;font-weight:400;font-size:15px}.thread-card small{color:#a08b76}
+.chat-heading{margin:20px 0 12px}.chat-heading h3{font-weight:400;overflow-wrap:anywhere}
+.message-list{display:flex;flex-direction:column;gap:12px;max-height:420px;overflow-y:auto;padding:14px 8px;background:rgba(255,250,243,.6);border-radius:12px}
+.message{max-width:88%;padding:12px 14px;border-radius:14px;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.7}
+.message-you{align-self:flex-end;background:#e5d5c1}.message-kk{align-self:flex-start;background:#fffaf3;border:1px solid #e3d5c5}
+.message-meta{margin-bottom:4px;color:#927d68;font-size:11px}.message-form{margin-top:12px}.message-form textarea{display:block;resize:vertical}
+.record-comments{margin-top:15px;padding-top:12px;border-top:1px solid rgba(120,90,60,.12)}
+.comment-title{font-size:12px;color:#927d68;letter-spacing:1px;margin-bottom:8px}.comment-item{padding:8px 10px;margin:7px 0;background:rgba(255,250,243,.7);border-radius:9px;font-size:13px;line-height:1.7;white-space:pre-wrap;overflow-wrap:anywhere}
+.comment-author{font-size:11px;color:#a08b76;margin-bottom:3px}
+.comment-form textarea{width:100%;padding:10px;border:1px solid #c9b8a5;border-radius:9px;background:#fffaf3;color:#5c4636;font:inherit;font-size:13px;resize:vertical}
+[hidden]{display:none!important}
+@media(max-width:600px){.container{padding:45px 0}h1{font-size:36px;letter-spacing:7px}.card{height:220px}.card-front,.card-back{padding:28px}.days{font-size:34px}.inbox{padding:20px 12px}}
+
+/* refined editorial layout */
+.app-layout{
+  grid-template-columns:150px minmax(0,1fr);
+  gap:46px;
+  max-width:1180px;
+  padding:30px 34px;
+}
+.sidebar{
+  top:30px;
+  padding:10px 0;
+  background:transparent;
+  border:0;
+  border-radius:0;
+  box-shadow:none;
+}
+.sidebar-brand{
+  font-size:16px;
+  letter-spacing:5px;
+  margin:8px 0 7px;
+  text-align:left;
+  padding-left:12px;
+}
+.sidebar-note{
+  font-size:10px;
+  line-height:1.8;
+  text-align:left;
+  margin:0 0 34px;
+  padding-left:12px;
+  color:#9c8977;
+}
+.nav-button{
+  position:relative;
+  margin:5px 0;
+  padding:12px 12px;
+  border:0;
+  border-radius:7px;
+  color:#897663;
+  font-size:13px;
+  letter-spacing:.5px;
+  transition:background .2s ease,color .2s ease;
+}
+.nav-button.active{
+  background:rgba(255,250,243,.55);
+  color:#5c4636;
+  border:0;
+}
+.nav-button.active::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:25%;
+  bottom:25%;
+  width:2px;
+  background:#a88d70;
+}
+.nav-button:hover{background:rgba(255,250,243,.42)}
+.main-content .container{
+  max-width:760px;
+  padding:34px 0 58px;
+}
+.container{max-width:760px}
+h1{font-size:39px;letter-spacing:10px;font-weight:400;margin:14px 0 8px}
+.date{font-size:11px;letter-spacing:4px;color:#a18c78}
+.leaf{opacity:.7;margin-bottom:12px}
+.card{
+  max-width:520px;
+  height:178px;
+  margin:32px auto 0;
+}
+.card-front,.card-back{
+  padding:28px;
+  border-radius:14px;
+  box-shadow:0 10px 28px rgba(91,68,48,.07);
+  background:rgba(250,247,241,.78);
+}
+.card-front{font-size:18px;letter-spacing:.7px}
+.card-back{font-size:16px;line-height:1.9}
+.card-back::before{top:17px}
+.hint{margin-top:15px;font-size:11px;color:#a18c78;letter-spacing:1px}
+.time-card{
+  max-width:520px;
+  margin:42px auto 0;
+  padding:25px 22px;
+  background:rgba(250,247,241,.38);
+  border:1px solid rgba(120,90,60,.09);
+  border-radius:12px;
+  box-shadow:none;
+}
+.time-title,.time-subtitle{font-size:12px;color:#907c69}
+.days{font-size:28px;margin:14px 0 7px}
+.records{margin-top:18px}
+.records-title{font-size:20px;letter-spacing:3px;margin-bottom:24px}
+.auth-card{box-shadow:none;border:1px solid rgba(120,90,60,.09)}
+.inbox{
+  margin-top:16px;
+  padding:26px 24px;
+  background:rgba(250,247,241,.35);
+  border:1px solid rgba(120,90,60,.09);
+  border-radius:14px;
+}
+.thread-card{box-shadow:none}
+@media(max-width:700px){
+  .app-layout{display:block;padding:10px 16px}
+  .sidebar{
+    position:sticky;top:0;z-index:10;
+    display:flex;align-items:center;gap:4px;
+    padding:7px 0;margin:0 0 10px;
+    overflow-x:auto;
+    background:rgba(232,220,203,.94);
+    border-bottom:1px solid rgba(120,90,60,.1);
+  }
+  .sidebar-brand,.sidebar-note{display:none}
+  .nav-button{flex:1;white-space:nowrap;text-align:center;margin:0;padding:10px 7px;font-size:12px}
+  .nav-button.active::before{left:20%;right:20%;top:auto;bottom:2px;width:auto;height:2px}
+  .main-content .container{padding:20px 0 36px}
+  h1{font-size:32px;letter-spacing:7px}
+  .card{height:165px;margin-top:26px}
+  .time-card{margin-top:30px;padding:22px 16px}
+  .inbox{padding:20px 14px}
+}
+
+
+/* compact, collapsible navigation rail */
+.app-layout{display:block;max-width:1180px;padding:30px 34px;margin:0 auto}
+.sidebar{position:fixed;z-index:30;left:18px;top:42%;transform:translateY(-50%);width:48px;padding:7px;background:rgba(250,247,241,.92);border:1px solid rgba(120,90,60,.13);border-radius:15px;box-shadow:0 5px 20px rgba(91,68,48,.06);backdrop-filter:blur(12px);transition:width .22s ease,padding .22s ease}
+.sidebar-toggle{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;width:32px;height:36px;margin:0 auto;border:0;border-radius:9px;background:transparent;cursor:pointer}
+.sidebar-toggle:hover{background:rgba(232,220,203,.7)}
+.sidebar-toggle span{display:block;width:15px;height:1.5px;border-radius:2px;background:#806b57;transition:transform .2s ease}
+.sidebar-brand,.sidebar-note,.nav-button{display:none}
+.sidebar.expanded{width:178px;padding:13px 10px;transform:none;top:calc(42% - 25px)}
+.sidebar.expanded .sidebar-toggle{margin:0 0 10px auto}
+.sidebar.expanded .sidebar-brand{display:block;font-size:15px;letter-spacing:4px;text-align:left;padding-left:10px;margin:4px 0 5px}
+.sidebar.expanded .sidebar-note{display:block;text-align:left;padding-left:10px;margin:0 0 18px;font-size:10px;color:#9c8977}
+.sidebar.expanded .nav-button{display:block;width:100%;margin:4px 0;padding:11px 10px;text-align:left;font-size:13px;border:0;border-radius:8px;background:transparent;color:#897663;cursor:pointer}
+.sidebar.expanded .nav-button.active{background:rgba(232,220,203,.65);color:#5c4636}
+.sidebar.expanded .nav-button.active::before{content:none}
+.sidebar.expanded .nav-button:hover{background:rgba(232,220,203,.45)}
+.main-content .container{max-width:760px}
+@media(max-width:700px){
+ .app-layout{display:block;padding:12px 16px}
+ .sidebar{left:10px;top:18px;transform:none;width:42px;padding:4px;border-radius:12px}
+ .sidebar-toggle{width:32px;height:34px}
+ .sidebar.expanded{left:10px;top:18px;width:178px;transform:none}
+ .main-content .container{padding:20px 0 36px}
+}
+
+
+/* full-height, ChatGPT-style expandable sidebar */
+.sidebar{
+  position:fixed; left:0; top:0; bottom:0; height:100vh; width:54px;
+  transform:none; padding:14px 9px; border-radius:0 14px 14px 0;
+  border:0; border-right:1px solid rgba(120,90,60,.12);
+  background:rgba(248,245,238,.94); box-shadow:3px 0 18px rgba(91,68,48,.035);
+  backdrop-filter:blur(14px); overflow:hidden;
+  transition:width .22s ease; display:flex; flex-direction:column; align-items:stretch;
+}
+.sidebar-toggle{flex:0 0 36px; width:36px;height:36px;margin:0 0 22px 0;align-self:flex-start}
+.sidebar-brand,.sidebar-note,.nav-button{display:none}
+.sidebar.expanded{left:0;top:0;bottom:0;height:100vh;width:246px;transform:none;padding:14px 12px;border-radius:0 14px 14px 0}
+.sidebar.expanded .sidebar-toggle{margin:0 0 22px 0;align-self:flex-start}
+.sidebar.expanded .sidebar-brand{display:block;font-size:16px;letter-spacing:4px;text-align:left;padding:0 12px;margin:2px 0 5px}
+.sidebar.expanded .sidebar-note{display:block;text-align:left;padding:0 12px;margin:0 0 28px;font-size:10px;color:#9c8977}
+.sidebar.expanded .nav-button{display:block;flex:0 0 auto;width:100%;margin:3px 0;padding:12px 12px;text-align:left;font-size:13px;border:0;border-radius:9px;background:transparent;color:#897663;cursor:pointer;white-space:nowrap}
+.sidebar.expanded .nav-button.active{background:rgba(232,220,203,.65);color:#5c4636}
+.sidebar.expanded .nav-button.active::before{content:none}
+.sidebar.expanded .nav-button:hover{background:rgba(232,220,203,.45)}
+.main-content{margin-left:54px;transition:margin-left .22s ease}
+.app-layout{max-width:none;padding:30px 34px}
+.main-content .container{max-width:760px}
+@media(max-width:700px){
+ .sidebar{left:0;top:0;bottom:0;height:100dvh;width:48px;padding:10px 6px;border-radius:0 12px 12px 0}
+ .sidebar-toggle{width:34px;height:36px;margin-bottom:18px}
+ .sidebar.expanded{left:0;top:0;bottom:0;height:100dvh;width:min(246px,82vw);padding:10px 10px}
+ .main-content{margin-left:38px}
+ .app-layout{padding:18px 12px}
+ .main-content .container{padding:20px 0 36px}
+}
+
+</style>
+</head>
+<body>
+<div class="app-layout">
+  <aside class="sidebar" id="sidebarNav" aria-label="主导航">
+    <button class="sidebar-toggle" id="sidebarToggle" type="button" aria-label="打开导航" aria-expanded="false" title="打开导航"><span></span><span></span><span></span></button>
+    <div class="sidebar-brand">纪念日</div>
+    <div class="sidebar-note">把值得记住的日子收好</div>
+    <button class="nav-button active" type="button" data-page="home">纪念日主页</button>
+    <button class="nav-button" type="button" data-page="records">我的成长记录</button>
+    <button class="nav-button" type="button" data-page="inbox">KK 和我的信箱</button>
+  </aside>
+  <div class="main-content">
+  <section class="page-panel" id="homePanel">
+  <main class="container">
+  <div class="leaf"><svg viewBox="0 0 50 50"><path d="M25 40 C24 29,17 20,8 17 C9 27,15 36,25 40"/><path d="M25 40 C26 29,33 20,42 17 C41 27,35 36,25 40"/><path d="M25 40 C25 31,25 23,25 14"/></svg></div>
+  <h1>纪念日</h1>
+  <div class="date">2026 · 10 · 02</div>
+  <div class="card" id="card"><div class="card-inner">
+    <div class="card-front" id="memorial"></div>
+    <div class="card-back">第一次做网站的这一天，<br>也值得被好好记住。<br>愿你以后回头看时，<br>还记得自己是从这里开始的。</div>
+  </div></div>
+  <div class="hint">点击卡片看看</div>
+  <section class="time-card"><div class="time-title">从这一天开始</div><div class="days"><span id="daysNumber">0</span><span>天</span></div><div class="time-subtitle">我已经做网站走了这么远</div></section>
+
+  </main>
+  </section>
+  <section class="page-panel" id="recordsPanel" hidden>
+  <main class="container">
+  <section class="records">
+    <div class="records-title">我的成长记录</div>
+    <div class="auth-card" id="authCard">
+      <h2>私人记录</h2><p>登录自己的账号，查看和管理成长记录。访客无法查看这些内容。</p>
+      <form id="loginForm">
+        <input id="email" type="email" autocomplete="username" placeholder="你的邮箱" required>
+        <input id="password" type="password" autocomplete="current-password" placeholder="登录密码" required>
+        <button type="submit">登录</button>
+      </form>
+      <div class="status" id="authStatus" role="status">请使用你在 Supabase 创建的邮箱和密码登录。</div>
+    </div>
+
+    <div id="privateArea" hidden>
+      <p class="status" id="privateStatus" role="status"></p>
+      <div id="recordList"></div>
+      <div style="text-align:center">
+        <button class="add-button" id="addButton" type="button">＋ 记录一个新的日子</button>
+        <button class="action-button" id="testKkButton" type="button">测试 KK 连接</button><button class="action-button" id="logoutButton" type="button">退出登录</button><div class="status" id="testKkStatus" role="status"></div>
+      </div>
+
+    </div>
+  </section>
+  </main>
+  </section>
+  <section class="page-panel" id="inboxPanel" hidden>
+  <main class="container">
+      <section class="inbox" id="inboxSection">
+        <div class="records-title">KK 和我的信箱</div>
+        <p class="status inbox-intro">可以为每个话题单独写信，点开话题后继续对话。</p>
+        <div class="inbox-create">
+          <input id="threadTitle" type="text" maxlength="100" placeholder="给这封信起个标题，例如：今天想说的话">
+          <button class="add-button" id="createThreadButton" type="button">＋ 写一封新信</button>
+        </div>
+        <div id="inboxStatus" class="status" role="status"></div>
+        <div id="threadList"></div>
+        <div id="chatPanel" hidden>
+          <div class="chat-heading">
+            <button class="action-button" id="backToInboxButton" type="button">← 返回信箱</button>
+            <h3 id="chatTitle"></h3>
+          </div>
+          <div id="messageList" class="message-list"></div>
+          <form id="messageForm" class="message-form">
+            <textarea id="messageText" rows="3" maxlength="2000" placeholder="写下你想说的话……" required></textarea>
+            <button class="add-button" type="submit">发送</button>
+          </form>
+          <div id="messageStatus" class="status" role="status"></div>
+          <div style="text-align:right;margin-top:8px">
+            <button class="action-button" id="mockInboxReplyButton" type="button">让 KK 回复（模拟）</button>
+            <button class="action-button" id="aiInboxReplyButton" type="button">测试 AI 回复接口</button>
+          </div>
+        </div>
+      </section>
+  </main>
+  </section>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = "https://eztmqrnjrrmtotpnyuwx.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_30N2roj2olTA4IH_fLtNYw_q7mM6m6G";
+
+const start = new Date(2026, 9, 2);
+const today = new Date();
+const now = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+const diffDays = Math.max(0, Math.floor((now - start) / 86400000));
+document.getElementById("daysNumber").textContent = diffDays;
+document.getElementById("memorial").textContent = diffDays === 0 ? "今天是第一次做网站的日子" : "第一次做网站，已经过去了 " + diffDays + " 天";
+document.getElementById("card").addEventListener("click", () => document.getElementById("card").classList.toggle("flipped"));
+
+const navButtons = [...document.querySelectorAll(".nav-button")];
+const pagePanels = {
+  home: document.getElementById("homePanel"),
+  records: document.getElementById("recordsPanel"),
+  inbox: document.getElementById("inboxPanel")
+};
+const inboxSection = document.getElementById("inboxSection");
+function showPage(page) {
+  Object.entries(pagePanels).forEach(([key, panel]) => { panel.hidden = key !== page; });
+  navButtons.forEach(button => button.classList.toggle("active", button.dataset.page === page));
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+const sidebarNav = document.getElementById("sidebarNav");
+const sidebarToggle = document.getElementById("sidebarToggle");
+function setSidebarOpen(open) {
+  sidebarNav.classList.toggle("expanded", open);
+  sidebarToggle.setAttribute("aria-expanded", String(open));
+  sidebarToggle.setAttribute("aria-label", open ? "收起导航" : "打开导航");
+  sidebarToggle.title = open ? "收起导航" : "打开导航";
+}
+sidebarToggle.addEventListener("click", () => setSidebarOpen(!sidebarNav.classList.contains("expanded")));
+navButtons.forEach(button => button.addEventListener("click", () => {
+  showPage(button.dataset.page);
+  setSidebarOpen(false);
+}));
+
+const authCard = document.getElementById("authCard");
+const privateArea = document.getElementById("privateArea");
+const authStatus = document.getElementById("authStatus");
+const privateStatus = document.getElementById("privateStatus");
+const recordList = document.getElementById("recordList");
+const threadList = document.getElementById("threadList");
+const inboxStatus = document.getElementById("inboxStatus");
+const chatPanel = document.getElementById("chatPanel");
+const chatTitle = document.getElementById("chatTitle");
+const messageList = document.getElementById("messageList");
+const messageStatus = document.getElementById("messageStatus");
+let supabaseClient = null;
+let currentUser = null;
+
+let currentThread = null;
+
+// KK Edge Function caller. Mock replies are enabled; paid AI remains server-disabled.
+async function callKkReply(mode, targetId, action) {
+  if (!currentUser || !supabaseClient) throw new Error("请先登录");
+  const { data, error } = await supabaseClient.auth.getSession();
+  if (error || !data.session?.access_token) throw new Error("登录状态已失效，请重新登录");
+
+  const response = await fetch(SUPABASE_URL + "/functions/v1/kk-ai-reply", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + data.session.access_token,
+      "apikey": SUPABASE_PUBLISHABLE_KEY
+    },
+    body: JSON.stringify({
+      mode,
+      target_id: String(targetId),
+      action
+    })
+  });
+
+  const raw = await response.text();
+  let result;
+  try { result = JSON.parse(raw); }
+  catch { result = { error: raw.slice(0, 300) }; }
+
+  if (!response.ok || !result.success) {
+    throw new Error(result.error || result.message || ("HTTP " + response.status));
+  }
+  return result;
+}
+
+
+function setLoggedOut(message) {
+  currentUser = null;
+  currentThread = null;
+  authCard.hidden = false;
+  privateArea.hidden = true;
+  inboxSection.hidden = true;
+  recordList.replaceChildren();
+  threadList.replaceChildren();
+  messageList.replaceChildren();
+  chatPanel.hidden = true;
+  threadList.hidden = false;
+  inboxStatus.hidden = false;
+  if (message) authStatus.textContent = message;
+}
+function formatDate(value) {
+  if (!value) return "";
+  const parts = value.split("-");
+  return parts.length === 3 ? parts.join(" · ") : value;
+}
+function addTextElement(parent, className, value) {
+  const element = document.createElement("div");
+  element.className = className;
+  element.textContent = value ?? "";
+  parent.appendChild(element);
+  return element;
+}
+
+async function loadRecordComments(recordId, container) {
+  const section = document.createElement("div");
+  section.className = "record-comments";
+  const heading = document.createElement("div");
+  heading.className = "comment-title";
+  heading.textContent = "记录下的留言";
+  section.appendChild(heading);
+
+  const { data, error } = await supabaseClient
+    .from("record_comments")
+    .select("id, sender, text, created_at")
+    .eq("record_id", recordId)
+    .eq("user_id", currentUser.id)
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    const err = document.createElement("div");
+    err.className = "status";
+    err.textContent = "留言读取失败：" + error.message;
+    section.appendChild(err);
+  } else if (data && data.length) {
+    data.forEach(item => {
+      const comment = document.createElement("div");
+      comment.className = "comment-item";
+      const author = document.createElement("div");
+      author.className = "comment-author";
+      author.textContent = item.sender === "kk" ? "KK" : "我";
+      const text = document.createElement("div");
+      text.textContent = item.text;
+      comment.append(author, text);
+      section.appendChild(comment);
+    });
+  } else {
+    const empty = document.createElement("div");
+    empty.className = "status";
+    empty.textContent = "还没有留言。";
+    section.appendChild(empty);
+  }
+
+  const form = document.createElement("form");
+  form.className = "comment-form";
+  const textarea = document.createElement("textarea");
+  textarea.rows = 2;
+  textarea.maxLength = 2000;
+  textarea.placeholder = "给这条记录补充一句话……";
+  textarea.required = true;
+  const submit = document.createElement("button");
+  submit.className = "action-button";
+  submit.type = "submit";
+  submit.textContent = "添加留言";
+  form.append(textarea, submit);
+  form.addEventListener("submit", async event => {
+    event.preventDefault();
+    const text = textarea.value.trim();
+    if (!text || !currentUser) return;
+    submit.disabled = true;
+    const { error } = await supabaseClient.from("record_comments").insert({
+      record_id: recordId,
+      user_id: currentUser.id,
+      sender: "you",
+      text
+    });
+    submit.disabled = false;
+    if (error) {
+      alert("留言保存失败：" + error.message);
+      return;
+    }
+    await loadRecords();
+  });
+  section.appendChild(form);
+  container.appendChild(section);
+}
+
+async function loadRecords() {
+  if (!currentUser) return;
+  privateStatus.textContent = "正在读取你的记录……";
+  recordList.replaceChildren();
+  const { data, error } = await supabaseClient.from("website_records")
+    .select("id, record_date, text")
+    .eq("user_id", currentUser.id)
+    .order("created_at", { ascending: false });
+  if (error) {
+    privateStatus.textContent = "读取失败：" + error.message;
+    return;
+  }
+  if (!data || data.length === 0) {
+    privateStatus.textContent = "这里还没有记录，可以添加第一条。";
+    return;
+  }
+  privateStatus.textContent = "这些记录只有你登录后才能查看。";
+  for (const record of data) {
+    const card = document.createElement("div");
+    card.className = "record";
+    addTextElement(card, "record-date", formatDate(record.record_date));
+    addTextElement(card, "record-text", record.text);
+    const actions = document.createElement("div");
+    actions.style.textAlign = "right";
+    const editButton = document.createElement("button");
+    editButton.className = "action-button";
+    editButton.type = "button";
+    editButton.textContent = "修改";
+    editButton.addEventListener("click", async () => {
+      const updatedText = prompt("修改这条成长记录：", record.text);
+      if (updatedText === null || !updatedText.trim()) return;
+      const { error } = await supabaseClient.from("website_records")
+        .update({ text: updatedText.trim() }).eq("id", record.id).eq("user_id", currentUser.id);
+      if (error) alert("修改失败：" + error.message); else await loadRecords();
+    });
+    const deleteButton = document.createElement("button");
+    deleteButton.className = "action-button";
+    deleteButton.type = "button";
+    deleteButton.textContent = "删除";
+    deleteButton.addEventListener("click", async () => {
+      if (!confirm("确定删除这条成长记录吗？")) return;
+      const { error } = await supabaseClient.from("website_records")
+        .delete().eq("id", record.id).eq("user_id", currentUser.id);
+      if (error) alert("删除失败：" + error.message); else await loadRecords();
+    });
+
+    const mockReplyButton = document.createElement("button");
+    mockReplyButton.className = "action-button";
+    mockReplyButton.type = "button";
+    mockReplyButton.textContent = "让 KK 留言（模拟）";
+    mockReplyButton.addEventListener("click", async () => {
+      mockReplyButton.disabled = true;
+      privateStatus.textContent = "KK 正在准备模拟留言……";
+      try {
+        await callKkReply("record", record.id, "mock_reply");
+        await loadRecords();
+      } catch (error) {
+        privateStatus.textContent = "KK 留言失败：" + error.message;
+      } finally {
+        mockReplyButton.disabled = false;
+      }
+    });
+
+    const aiReplyButton = document.createElement("button");
+    aiReplyButton.className = "action-button";
+    aiReplyButton.type = "button";
+    aiReplyButton.textContent = "测试 AI 回复接口";
+    aiReplyButton.addEventListener("click", async () => {
+      aiReplyButton.disabled = true;
+      privateStatus.textContent = "正在检查 AI 回复接口……";
+      try {
+        await callKkReply("record", record.id, "ai_reply");
+        privateStatus.textContent = "接口检查通过。";
+      } catch (error) {
+        privateStatus.textContent = "AI 尚未启用或检查未通过：" + error.message;
+      } finally {
+        aiReplyButton.disabled = false;
+      }
+    });
+
+    actions.append(editButton, deleteButton, mockReplyButton, aiReplyButton);
+    card.appendChild(actions);
+    recordList.appendChild(card);
+    await loadRecordComments(record.id, card);
+  }
+}
+
+async function loadThreads() {
+  if (!currentUser) return;
+  inboxStatus.textContent = "正在打开信箱……";
+  threadList.replaceChildren();
+  const { data, error } = await supabaseClient.from("inbox_threads")
+    .select("id, title, updated_at, created_at")
+    .eq("user_id", currentUser.id)
+    .order("updated_at", { ascending: false });
+  if (error) {
+    inboxStatus.textContent = "读取信箱失败：" + error.message;
+    return;
+  }
+  if (!data || data.length === 0) {
+    inboxStatus.textContent = "信箱还是空的，可以写下第一封信。";
+    return;
+  }
+  inboxStatus.textContent = "点开一封信，就能进入对应的话题。";
+  data.forEach(thread => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "thread-card";
+    const title = document.createElement("strong");
+    title.textContent = thread.title;
+    const meta = document.createElement("small");
+    meta.textContent = "打开这封信";
+    button.append(title, meta);
+    button.addEventListener("click", () => openThread(thread));
+    threadList.appendChild(button);
+  });
+}
+async function openThread(thread) {
+  currentThread = thread;
+  chatTitle.textContent = thread.title;
+  chatPanel.hidden = false;
+  threadList.hidden = true;
+  inboxStatus.hidden = true;
+  await loadMessages();
+}
+async function loadMessages() {
+  if (!currentUser || !currentThread) return;
+  messageList.replaceChildren();
+  messageStatus.textContent = "正在读取消息……";
+  const { data, error } = await supabaseClient.from("inbox_messages")
+    .select("id, sender, text, created_at")
+    .eq("thread_id", currentThread.id)
+    .eq("user_id", currentUser.id)
+    .order("created_at", { ascending: true });
+  if (error) {
+    messageStatus.textContent = "读取消息失败：" + error.message;
+    return;
+  }
+  if (!data || data.length === 0) {
+    messageStatus.textContent = "这封信还没有消息。";
+    return;
+  }
+  data.forEach(item => {
+    const bubble = document.createElement("div");
+    bubble.className = "message " + (item.sender === "kk" ? "message-kk" : "message-you");
+    const meta = document.createElement("div");
+    meta.className = "message-meta";
+    meta.textContent = item.sender === "kk" ? "KK" : "我";
+    const content = document.createElement("div");
+    content.textContent = item.text;
+    bubble.append(meta, content);
+    messageList.appendChild(bubble);
+  });
+  messageStatus.textContent = "";
+  messageList.scrollTop = messageList.scrollHeight;
+}
+document.getElementById("createThreadButton").addEventListener("click", async () => {
+  if (!currentUser) return;
+  const input = document.getElementById("threadTitle");
+  const title = input.value.trim();
+  if (!title) {
+    inboxStatus.textContent = "先给这封信起个标题吧。";
+    return;
+  }
+  inboxStatus.textContent = "正在创建……";
+  const { data, error } = await supabaseClient.from("inbox_threads")
+    .insert({ user_id: currentUser.id, title })
+    .select("id, title, updated_at, created_at").single();
+  if (error) {
+    inboxStatus.textContent = "创建失败：" + error.message;
+    return;
+  }
+  input.value = "";
+  await loadThreads();
+  await openThread(data);
+});
+document.getElementById("messageForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  if (!currentUser || !currentThread) return;
+  const input = document.getElementById("messageText");
+  const text = input.value.trim();
+  if (!text) return;
+  messageStatus.textContent = "正在发送……";
+  const { error } = await supabaseClient.from("inbox_messages").insert({
+    thread_id: currentThread.id,
+    user_id: currentUser.id,
+    sender: "you",
+    text
+  });
+  if (error) {
+    messageStatus.textContent = "发送失败：" + error.message;
+    return;
+  }
+  input.value = "";
+  await loadMessages();
+});
+document.getElementById("backToInboxButton").addEventListener("click", async () => {
+  currentThread = null;
+  chatPanel.hidden = true;
+  threadList.hidden = false;
+  inboxStatus.hidden = false;
+  await loadThreads();
+});
+
+document.getElementById("mockInboxReplyButton").addEventListener("click", async () => {
+  if (!currentThread) return;
+  const button = document.getElementById("mockInboxReplyButton");
+  button.disabled = true;
+  messageStatus.textContent = "KK 正在准备模拟回复……";
+  try {
+    await callKkReply("inbox", currentThread.id, "mock_reply");
+    await loadMessages();
+  } catch (error) {
+    messageStatus.textContent = "KK 回复失败：" + error.message;
+  } finally {
+    button.disabled = false;
+  }
+});
+
+document.getElementById("aiInboxReplyButton").addEventListener("click", async () => {
+  if (!currentThread) return;
+  const button = document.getElementById("aiInboxReplyButton");
+  button.disabled = true;
+  messageStatus.textContent = "正在检查 AI 回复接口……";
+  try {
+    await callKkReply("inbox", currentThread.id, "ai_reply");
+    messageStatus.textContent = "接口检查通过。";
+  } catch (error) {
+    messageStatus.textContent = "AI 尚未启用或检查未通过：" + error.message;
+  } finally {
+    button.disabled = false;
+  }
+});
+
+async function showSignedInUser(user) {
+  currentUser = user;
+  authCard.hidden = true;
+  privateArea.hidden = false;
+  inboxSection.hidden = false;
+  await loadRecords();
+  await loadThreads();
+}
+document.getElementById("loginForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  if (!supabaseClient) {
+    authStatus.textContent = "Supabase 配置不正确，请检查 Project URL 和 Publishable key。";
+    return;
+  }
+  authStatus.textContent = "正在登录……";
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+  if (error) {
+    authStatus.textContent = "登录失败，请检查邮箱和密码。详细信息：" + error.message;
+    return;
+  }
+  await showSignedInUser(data.user);
+});
+document.getElementById("addButton").addEventListener("click", async () => {
+  if (!currentUser) return;
+  const text = prompt("今天做了什么？");
+  if (text === null || !text.trim()) return;
+  const d = new Date();
+  const dateText = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  const { error } = await supabaseClient.from("website_records").insert({
+    record_date: dateText, text: text.trim(), user_id: currentUser.id
+  });
+  if (error) alert("保存失败：" + error.message); else await loadRecords();
+});
+document.getElementById("testKkButton").addEventListener("click", async () => {
+ const status = document.getElementById("testKkStatus");
+ const button = document.getElementById("testKkButton");
+ if (!currentUser || !supabaseClient) { status.textContent = "请先登录"; return; }
+ button.disabled = true;
+ status.textContent = "正在测试连接……";
+ try {
+  const { data, error } = await supabaseClient.auth.getSession();
+  if (error || !data.session?.access_token) { status.textContent = "登录状态无效，请重新登录"; return; }
+  const response = await fetch(SUPABASE_URL + "/functions/v1/kk-ai-reply", {
+   method: "POST",
+   headers: { "Content-Type":"application/json", "Authorization":"Bearer " + data.session.access_token, "apikey":SUPABASE_PUBLISHABLE_KEY },
+   body: JSON.stringify({})
+  });
+  const raw = await response.text();
+  let result; try { result = JSON.parse(raw); } catch { result = {error:raw.slice(0,200)}; }
+  status.textContent = "HTTP " + response.status + "：" + (result.error || result.message || result.reply || JSON.stringify(result));
+ } catch (error) { status.textContent = "连接失败：" + error.message; }
+ finally { button.disabled = false; }
+});
+
+document.getElementById("logoutButton").addEventListener("click", async () => {
+  const { error } = await supabaseClient.auth.signOut();
+  if (error) {
+    alert("退出登录失败：" + error.message);
+    return;
+  }
+  setLoggedOut("你已退出登录。成长记录已隐藏。");
+});
+async function initialize() {
+  if (!window.supabase || !SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
+    authStatus.textContent = "Supabase 配置缺失，请检查 Project URL 和 Publishable key。";
+    return;
+  }
+  try {
+    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+    const { data, error } = await supabaseClient.auth.getSession();
+    if (error) throw error;
+    if (data.session?.user) await showSignedInUser(data.session.user);
+  } catch (error) {
+    authStatus.textContent = "初始化失败，请检查网络和 Supabase 配置。";
+  }
+}
+setLoggedOut();
+initialize();
+</script>
+</body>
+</html>
